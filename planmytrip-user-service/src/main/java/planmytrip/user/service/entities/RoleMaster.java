@@ -2,6 +2,7 @@ package planmytrip.user.service.entities;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import ch.qos.logback.core.status.Status;
@@ -17,14 +18,10 @@ import jakarta.persistence.Table;
 
 @jakarta.persistence.Entity
 @Table(name="ROLE_MASTER")
-public class RoleMaster{
+public class RoleMaster extends AbstractEntityClass{
 	
-	@Id
-	@Column(name="ROLE_ID", unique = true, nullable = false, updatable = false, length = 5)
-	private Long roleId;
-	
-	@Column(name="ROLE_NAME", unique = true, nullable = false, updatable = false, length = 255)
-	private String roleName;
+	@Column(name="ROLE_NAME", unique = true, nullable = false, updatable = false, length = 50)
+	private String roleName;									// ADMIN - CHECKER - MAKER - EMPLOYEE - CUSTOMER
 	
 	@Column(name="CREATED_BY_USR", nullable = false)
 	private String createdByUser;
@@ -38,20 +35,22 @@ public class RoleMaster{
 	@Column(name="UPDATED_DATE")
 	private LocalDateTime updatedDate;
 	
-// 	ACTIVE / INACTIVE
+	
+	@OneToMany(fetch = FetchType.LAZY,mappedBy = "role")
+	private List<Employee> employees;
+	
+
 	@ManyToOne(cascade = CascadeType.ALL, targetEntity = StatusMaster.class)
-	@JoinColumn(name = "STATUS", referencedColumnName = "ID", foreignKey = @ForeignKey(name="fk_STATUS_ID"))
+	@JoinColumn(name = "STATUS_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name="fk_ROLE_STATUS_ID"))
 	private StatusMaster status;
 
-
-	public Long getRoleId() {
-		return roleId;
+	public RoleMaster() {
+		super();
 	}
-
-
-	public void setRoleId(Long roleId) {
-		this.roleId = roleId;
-	}
+	
+	
+	
+	
 
 
 	public String getRoleName() {
@@ -104,6 +103,14 @@ public class RoleMaster{
 	}
 
 
+	public List<Employee> getEmployees() {
+		return employees;
+	}
+
+	public void setEmployees(List<Employee> employees) {
+		this.employees = employees;
+	}
+
 	public StatusMaster getStatus() {
 		return status;
 	}
@@ -114,6 +121,36 @@ public class RoleMaster{
 	}
 
 
+
+
+
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(roleName);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RoleMaster other = (RoleMaster) obj;
+		return Objects.equals(roleName, other.roleName);
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "RoleMaster [roleName=" + roleName + ", status=" + status + "]";
+	}
+
+
+	
 	
 	
 	

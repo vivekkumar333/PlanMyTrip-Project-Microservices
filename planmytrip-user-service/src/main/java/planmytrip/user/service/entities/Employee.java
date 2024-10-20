@@ -1,6 +1,8 @@
 package planmytrip.user.service.entities;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -14,59 +16,75 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @jakarta.persistence.Entity
-@Table(name="USR_TBL")
-public class User{
+@Table(name="EMPLOYEE")
+public class Employee extends AbstractEntityClass{
 	
 	@Id
-	@Column(name="USR_NAME", unique = true, nullable = false, updatable = false, length = 20)
-	// USER FRST_NAME starting 2 char + random id
-	private String userName;
+	@Column(name="EMP_ID", unique = true, nullable = false, updatable = false, length = 20)
+	private String employeeId;
 	
-	@Column(name="FRST_NAME", nullable = false, length = 255)
+	@Column(name="EMP_NAME", nullable = false, length = 255)
 	private String firstName;
 	
 	@Column(name="LST_NAME", length = 255)
 	private String lastName;
 	
-	@Column(name="GENDER", length = 1, nullable = false)
-	// Male : M, Female : F
-	private char gender;
+	@ManyToOne(cascade = CascadeType.ALL, targetEntity = GenderMaster.class)
+	@JoinColumn(name = "GENDER_ID", foreignKey = @ForeignKey(name="fk_EMP_GENDER_ID"), referencedColumnName = "ID", nullable = false)
+	private Long gender;
 	
 	@Column(name="EMAIL_ID", unique = true, nullable = false, length = 255)
 	private String email;
 	
-	@Column(name="PHONE_NO", unique = true,  length = 100)
+	@Column(name="PHONE_NO", unique = true,  length = 50)
 	private String phoneNo;
 	
 	@Column(name="PSSWRD", nullable = false, length = 255)
 	private String password;
-	
-	@OneToMany(fetch=FetchType.LAZY, mappedBy = "user")
-	private List<Address> address;
-	
-	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
-	private Set<CardDetails> cardDetails;
-	
-	
-	//Admin : 1 , User(Default) : 2, //Employee : 3 	/ForString->/@ColumnDefault("'N/A'")
+
 	@ManyToOne(cascade = CascadeType.ALL, targetEntity = RoleMaster.class)
-	@JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID", foreignKey = @ForeignKey(name="fk_USR_ROLE_ID"))
+	@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name="fk_EMP_ROLE_ID"))
 	private RoleMaster role;
 	
-	//Active(Default) : 1, Blocked : 2, Inactive: 3, Dormant: 4, Revoke: 5	
 	@ManyToOne(cascade = CascadeType.ALL, targetEntity = StatusMaster.class)
-	@JoinColumn(name = "STATUS_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name="fk_USR_STATUS_ID"))
+	@JoinColumn(name = "STATUS_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name="fk_EMP_STATUS_ID"))
 	private StatusMaster status;
 
+	@ManyToOne(cascade = CascadeType.ALL, targetEntity = EmployeeGradeMaster.class)
+	@JoinColumn(name = "GRADE_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name="fk_EMP_GRADE_ID"))
+	private EmployeeGradeMaster grade;
 	
 	
+	@ManyToOne(cascade = CascadeType.ALL, targetEntity = JobProfileMaster.class)
+	@JoinColumn(name = "JOB_PROFILE_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name="fk_EMP_JPROFILE_ID"))
+	private JobProfileMaster jobProfile;
 	
-	public String getUserName() {
-		return userName;
+	
+	@Column(name="CREATED_BY_USR", nullable = false)
+	private String createdByUser;
+	
+	@Column(name="CREATED_DATE", nullable = false)
+	private LocalDateTime createdDate;
+	
+	@Column(name="UPDATED_BY_USR")
+	private String updatedByUser;
+
+	@Column(name="UPDATED_DATE")
+	private LocalDateTime updatedDate;
+	
+	
+	public Employee() {
+		super();
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	
+	
+	public String getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(String employeeId) {
+		this.employeeId = employeeId;
 	}
 
 	public String getFirstName() {
@@ -85,11 +103,11 @@ public class User{
 		this.lastName = lastName;
 	}
 
-	public char getGender() {
+	public Long getGender() {
 		return gender;
 	}
 
-	public void setGender(char gender) {
+	public void setGender(Long gender) {
 		this.gender = gender;
 	}
 
@@ -117,22 +135,6 @@ public class User{
 		this.password = password;
 	}
 
-	public List<Address> getAddress() {
-		return address;
-	}
-
-	public void setAddress(List<Address> address) {
-		this.address = address;
-	}
-
-	public Set<CardDetails> getCardDetails() {
-		return cardDetails;
-	}
-
-	public void setCardDetails(Set<CardDetails> cardDetails) {
-		this.cardDetails = cardDetails;
-	}
-
 	public RoleMaster getRole() {
 		return role;
 	}
@@ -148,6 +150,80 @@ public class User{
 	public void setStatus(StatusMaster status) {
 		this.status = status;
 	}
+
+	public EmployeeGradeMaster getGrade() {
+		return grade;
+	}
+
+	public void setGrade(EmployeeGradeMaster grade) {
+		this.grade = grade;
+	}
+
+	public JobProfileMaster getJobProfile() {
+		return jobProfile;
+	}
+
+	public void setJobProfile(JobProfileMaster jobProfile) {
+		this.jobProfile = jobProfile;
+	}
+
+	public String getCreatedByUser() {
+		return createdByUser;
+	}
+
+	public void setCreatedByUser(String createdByUser) {
+		this.createdByUser = createdByUser;
+	}
+
+	public LocalDateTime getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(LocalDateTime createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getUpdatedByUser() {
+		return updatedByUser;
+	}
+
+	public void setUpdatedByUser(String updatedByUser) {
+		this.updatedByUser = updatedByUser;
+	}
+
+	public LocalDateTime getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(LocalDateTime updatedDate) {
+		this.updatedDate = updatedDate;
+	}
+
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(email, employeeId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Employee other = (Employee) obj;
+		return Objects.equals(email, other.email) && Objects.equals(employeeId, other.employeeId);
+	}
+
+	@Override
+	public String toString() {
+		return "Employee [employeeId=" + employeeId + ", firstName=" + firstName + ", lastName=" + lastName + ", email="
+				+ email + ", role=" + role + ", status=" + status + ", grade=" + grade + ", jobProfile=" + jobProfile
+				+ "]";
+	}
+	
 	
 	
 }

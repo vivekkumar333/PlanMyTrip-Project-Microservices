@@ -1,8 +1,6 @@
 package planmytrip.user.service.entities;
 
-import java.time.LocalDate;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -32,9 +30,24 @@ public class CardDetails extends AbstractEntityClass{
 	@Column(name="SECURTY_CODE", nullable = false, updatable = false, length = 3)
 	private String securityCode;
 	
-	@ManyToOne(cascade = CascadeType.ALL, targetEntity = User.class)
-	@JoinColumn(name = "USR_NAME", referencedColumnName ="USR_NAME", foreignKey = @ForeignKey(name="fk_CRD_USR_NAME"), nullable = false)
-	private User user;
+	@ManyToOne(cascade = CascadeType.ALL, targetEntity = Customer.class)
+	@JoinColumn(name = "CUSTOMER_ID", referencedColumnName ="ID", foreignKey = @ForeignKey(name="fk_CRD_CUSTMER_ID"), nullable = false)
+	private Customer customer;
+
+	
+	public CardDetails() {
+		super();
+	}
+
+	
+	
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
 
 	public String getCardName() {
 		return cardName;
@@ -76,24 +89,9 @@ public class CardDetails extends AbstractEntityClass{
 		this.securityCode = securityCode;
 	}
 
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((cardExpiryDate == null) ? 0 : cardExpiryDate.hashCode());
-		result = prime * result + ((cardHolderName == null) ? 0 : cardHolderName.hashCode());
-		result = prime * result + ((cardName == null) ? 0 : cardName.hashCode());
-		result = prime * result + ((cardNumber == null) ? 0 : cardNumber.hashCode());
-		result = prime * result + ((securityCode == null) ? 0 : securityCode.hashCode());
-		return result;
+		return Objects.hash(cardName, cardNumber);
 	}
 
 	@Override
@@ -105,35 +103,8 @@ public class CardDetails extends AbstractEntityClass{
 		if (getClass() != obj.getClass())
 			return false;
 		CardDetails other = (CardDetails) obj;
-		if (cardExpiryDate == null) {
-			if (other.cardExpiryDate != null)
-				return false;
-		} else if (!cardExpiryDate.equals(other.cardExpiryDate))
-			return false;
-		if (cardHolderName == null) {
-			if (other.cardHolderName != null)
-				return false;
-		} else if (!cardHolderName.equals(other.cardHolderName))
-			return false;
-		if (cardName == null) {
-			if (other.cardName != null)
-				return false;
-		} else if (!cardName.equals(other.cardName))
-			return false;
-		if (cardNumber == null) {
-			if (other.cardNumber != null)
-				return false;
-		} else if (!cardNumber.equals(other.cardNumber))
-			return false;
-		if (securityCode == null) {
-			if (other.securityCode != null)
-				return false;
-		} else if (!securityCode.equals(other.securityCode))
-			return false;
-		return true;
+		return Objects.equals(cardName, other.cardName) && Objects.equals(cardNumber, other.cardNumber);
 	}
 
-	
-	
 	
 }
